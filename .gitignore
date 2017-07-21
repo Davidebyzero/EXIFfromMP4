@@ -1,0 +1,11 @@
+# Visual C++
+/*.vcproj.*.user
+/*.suo
+/*.ncb
+/ipch
+/Release
+/Debug
+
+# GNUmakefile
+/EXIFfromMP4
+/EXIFfromMP4.exe
