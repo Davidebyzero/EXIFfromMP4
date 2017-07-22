@@ -1,6 +1,6 @@
 (all numbers are in hex, except for angular degrees and when otherwise specified; EXIF encoding is in big endian)
 
-sigcnt1 and sigcnt2 appear at a certain point and subsequently strictly increment by 1 each time. They may signal what the following fields are.
+sigcnt1 and sigcnt2 appear at a certain point and subsequently increment by 1 each time, with a few skips. They may signal what the following fields are.
 
 05 (1): ? AF..B2 - may not even be part of the per-frame EXIF
 
