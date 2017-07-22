@@ -1,4 +1,4 @@
-@REM Usage: get-exif mp4_filename srt_filename
+@REM Usage: get-exif-subtitles mp4_filename srt_filename
 @REM        ffprobe.exe must be in your PATH.
 @REM This implementation uses "-show_entries packet=..." even though this shows the packets in decoding order, which is different
 @REM than presentation order for IPB videos, because "-show_entries frame=..." is much slower as currently implemented in ffmpeg.

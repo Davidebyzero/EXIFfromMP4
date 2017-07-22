@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: get-exif mp4_filename srt_filename
+# Usage: get-exif-subtitles mp4_filename srt_filename
 #        ffprobe must be in your PATH.
 # This implementation uses "-show_entries packet=..." even though this shows the packets in decoding order, which is different
 # than presentation order for IPB videos, because "-show_entries frame=..." is much slower as currently implemented in ffmpeg.
