@@ -1,0 +1,122 @@
+(all numbers are in hex, except for angular degrees and when otherwise specified; EXIF encoding is in big endian)
+
+sigcnt1 and sigcnt2 appear at a certain point and subsequently strictly increment by 1 each time. They may signal what the following fields are.
+
+05 (1): ? AF..B2 - may not even be part of the per-frame EXIF
+
+19 (4): ASCII string "USR1"
+1D (1): ? 1D
+1E (1): ? 18
+1F (1): ? 30 or 00
+20 (2): year         (BCD)
+22 (1): month        (BCD)
+23 (1): ? 19
+24 (1): day of month (BCD)
+25 (1): hours        (BCD)
+26 (1): minutes      (BCD)
+27 (1): seconds      (BCD)
+28 (1): ? 70
+29 (4): ? FFFFFFFF
+2D (1): sigcnt1 = A0
+2E (2): shutter speed numerator   (10 decimal if denominator is the variable)
+30 (2): shutter speed denominator (10 decimal if numerator   is the variable)
+32 (1): sigcnt1 = A1
+33 (2): aperture denominator
+35 (2): aperture numerator (10 decimal)
+37 (1): sigcnt1 = A2
+38 (1): ? 00
+39 (1): mode
+	01 = Manual
+	02 = Program
+	03 = Aperture Priority
+	04 = Shutter Priority
+	08 = Intelligent Auto
+3A (2): ? 0000
+3C (1): sigcnt1 = A4 (apparently A3 was skipped)
+3D (2): EV Compensation numerator (signed) - 0000 if in Manual mode with Manual ISO
+3F (2): EV Compensation denominator (100 decimal)
+41 (1): sigcnt1 = A5
+42 (1): ? 07
+43 (1): ? 00
+44 (1): ? 01
+45 (1): ? 00
+46 (1): sigcnt1 = A9 (apparently A6..A8 were skipped)
+47 (2): 35mm-equivalent focal length (actual focal length * 2 * Extra Tele Conversion multiplier)
+49 (2): ? 0000
+4B (1): sigcnt1 = AA
+4C (4): ? 00000000
+50 (1): sigcnt1 = AB
+51 (1): ? A4
+52 (1): ? 04
+53 (1): ? 05
+54 (1): ? 01
+55 (1): sigcnt1 = AC
+56 (4): ? 00000000
+5A (1): sigcnt1 = AD
+5B (1): ? 92
+5C (1): ? 0A
+5D (1): ? 05
+5E (1): ? 01
+5F (1): sigcnt1 = AE
+60 (2): focal length numerator
+62 (2): focal length denominator (10 decimal)
+64 (1): sigcnt1 = E0 (apparently AF..DF were skipped)
+65 (4): ? 00000000
+69 (1): sigcnt1 = E6 (apparently E1..E5 were skipped)
+6A (2): ? 0001
+6C (2): ? 0000
+6E (1): sigcnt1 = E7
+6F (1): sigcnt2 = 1E
+70 (2): ? 0000
+72 (1): orientation
+	01 = landscape - camera tilted 0 or 180 degrees
+	06 = portrait - camera tilted 90 degrees CW
+	08 = portrait - camera tilted 90 degrees CCW
+73 (1): sigcnt1 = E8
+74 (1): sigcnt2 = 1F
+75 (1): white balance preset
+	0 = AWB, AWBc, Custom, or Custom Kelvin
+	3 = incandescent
+	9 = sunlight
+	A = cloudy
+	B = shade
+76 (2): ISO
+78 (2): sigcnt1 = E9
+79 (1): sigcnt2 = 20
+7A (1): mode category
+	10 = not Intelligent Auto
+	70 = Intelligent Auto
+7B (2): ? 0000
+7D (1): sigcnt1 = EA
+7E (1): sigcnt2 = 21
+7F (2): mode
+	0301 = Intelligent Auto
+	0600 = Program
+	0700 = Aperture Priority
+	0800 = Shutter Priority
+	0B00 = Manual
+81 (1): ? 62
+82 (1): sigcnt1 = EB
+83 (1): sigcnt2 = 22
+84 (1): ? 05 or 06
+85 (2): white balance red level
+87 (1): sigcnt1 = EC
+88 (1): sigcnt2 = 23
+89 (1): ? 00
+8A (2): white balance green level (usually 0400)
+8C (1): sigcnt1 = ED
+8D (2): sigcnt2 = 24
+8E (1): ? 00
+8F (2): white balance blue level
+91 (1): sigcnt1 = EE
+92 (1): sigcnt2 = 25
+93 (1): ? 00
+94 (2): milliseconds
+96 (1): sigcnt1 = EF
+97 (1): sigcnt2 = 26
+98 (1): ? 00
+99 (2): ? 0000
+9B (1): sigcnt1 = F0
+9C (1): sigcnt2 = 2F (apparently 27..2E were skipped)
+9D (1): ? 00
+9E (1): ? 00 or FF
