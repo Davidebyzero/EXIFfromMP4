@@ -554,6 +554,13 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 #endif
 			if ((DWORD&)exif[0x19] == DWORD_ENDIAN('USR1'))
 			{
+#if defined(_WIN32) || defined(_WIN64)
+				TCHAR filename[32768];
+				_stprintf_s(filename, _T("\"%s\""), argv[4]); // workaround for flaw in the MSCRT implementation of passing arguments in the spawn functions - enclose filename in quotes in case it has spaces
+#else
+				const TCHAR *filename = argv[4];
+#endif
+
 				Uint initialThumbnailLength;
 				BYTE *initialThumbnail = GetFirstFrameThumbnailWithEXIFfromMP4(f0, initialThumbnailLength);
 				if (!initialThumbnail)
@@ -572,12 +579,14 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 					_write(stdin_pipe[1], initialThumbnail, initialThumbnailLength);
 					_close(stdin_pipe[1]);
 
-					if (_tspawnlp(_P_WAIT, exiftool, exiftool, _T("-overwrite_original"), _T("-tagsFromFile"), _T("-"), argv[4], NULL) == -1)
+					if (_tspawnlp(_P_WAIT, exiftool, exiftool, _T("-overwrite_original"), _T("-tagsFromFile"), _T("-"), filename, NULL) == -1)
 						_ftprintf(stderr, _T("Error starting %s\n"), exiftool);
 
 					_dup2(stdin_backup, STDIN_FILENO);
 				}
 
+				// since the date+time stamps have spaces in them, they must be enclosed in quotes to work around a flaw in the MSCRT implementation of passing arguments in the spawn functions;
+				// exiftool can handle it even if the quotes are passed through as literal quotes
 				static TCHAR exiftoolCreateDate      [] = _TCAT("-CreateDate=",       "\"YYYY-YY-YY hh:mm:ss\""); static TCHAR exiftoolSubSecTimeDigitized[] = _TCAT("-SubSecTimeDigitized=", "999");
 				static TCHAR exiftoolDateTimeOriginal[] = _TCAT("-DateTimeOriginal=", "\"YYYY-YY-YY hh:mm:ss\""); static TCHAR exiftoolSubSecTimeOriginal [] = _TCAT("-SubSecTimeOriginal=" , "999");
 				static TCHAR exiftoolModifyDate      [] = _TCAT("-ModifyDate=",       "\"YYYY-YY-YY hh:mm:ss\""); static TCHAR exiftoolSubSecTime         [] = _TCAT("-SubSecTime="         , "999");
@@ -683,7 +692,7 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 					_T("-AccelerometerZ=0"),
 					_T("-RollAngle="),
 					_T("-PitchAngle="),
-					_T("-overwrite_original"), argv[4], NULL
+					_T("-overwrite_original"), filename, NULL
 				};
 
 				for (Uint i=0;; i++)
