@@ -718,22 +718,22 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 				_stprintf(exiftoolWBGreenLevel + strlength("-WBGreenLevel="), _T("%u"), WORD_ENDIAN((WORD&)exif[0x8A]));
 				_stprintf(exiftoolWBBlueLevel  + strlength("-WBBlueLevel=" ), _T("%u"), WORD_ENDIAN((WORD&)exif[0x8F]));
 
-				static TCHAR exiftoolWhiteBalance[] = _TCAT("-WhiteBalance=", "255");
+				static TCHAR exiftoolWhiteBalance[] = _TCAT("-WhiteBalance#=", "255");
 				{
 					switch (exif[0x75])
 					{
-					case  0: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T( "1")); break; // AWB, AWBc, Custom, or Custom Kelvin
-					case  3: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T( "4")); break; // incandescent
-					case  9: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T( "2")); break; // sunlight
-					case 10: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T( "1")); break; // cloudy
-					case 11: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T("12")); break; // shade
-					default: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance="), _T( "0")); break;
+					case  0: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T( "1")); break; // AWB, AWBc, Custom, or Custom Kelvin
+					case  3: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T( "4")); break; // incandescent
+					case  9: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T( "2")); break; // sunlight
+					case 10: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T( "1")); break; // cloudy
+					case 11: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T("12")); break; // shade
+					default: _tcscpy(exiftoolWhiteBalance + strlength("-WhiteBalance#="), _T( "0")); break;
 					}
 				}
 
 				// TODO: set "ShootingMode" too, and handle Intelligent Auto mode correctly
-				static TCHAR exiftoolExposureProgram[] = _TCAT("-ExposureProgram=", "255");
-				_stprintf(exiftoolExposureProgram + strlength("-ExposureProgram="), _T("%u"), exif[0x39]);
+				static TCHAR exiftoolExposureProgram[] = _TCAT("-ExposureProgram#=", "255");
+				_stprintf(exiftoolExposureProgram + strlength("-ExposureProgram#="), _T("%u"), exif[0x39]);
 				// 1 = Manual mode
 				// 2 = Program mode
 				// 3 = Aperture-priority mode
@@ -743,7 +743,6 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 				static const TCHAR *args[] =
 				{
 					exiftool,
-					_T("-n"),
 					exiftoolCreateDate,       exiftoolSubSecTimeDigitized,
 					exiftoolDateTimeOriginal, exiftoolSubSecTimeOriginal,
 					exiftoolModifyDate,       exiftoolSubSecTime,
