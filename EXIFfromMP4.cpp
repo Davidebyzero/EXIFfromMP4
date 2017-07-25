@@ -556,7 +556,8 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 			char ch = fgetc(stdin);
 			if (feof(stdin) || ferror(stdin))
 				break;
-			putchar(ch);
+			fputc(ch, stdout);
+			fflush(stdout);
 			if (done)
 				continue;
 			if (linepos < sizeof(line))
