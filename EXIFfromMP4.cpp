@@ -291,9 +291,9 @@ int EXIFtoSubtitles(FILE *f0, FILE *f1)
 		return -1;
 	}
 
-	bool consecutive_pts;
-	Uint64 pts_next_expected = 0;
-	Uint64 pos_buffer[2];
+	bool consecutive_pts, beginning=true;
+	__int64 pts_next_expected;
+	__int64 pos_buffer[2];
 	Uint pos_buffer_i = 0;
 	for (Uint i=0;;)
 	{
@@ -311,11 +311,38 @@ int EXIFtoSubtitles(FILE *f0, FILE *f1)
 			fputs("Error: Unexpected line from stdin\n", stderr);
 			return -1;
 		}
-		Uint64 pts, pos;
-		sscanf(line + strlength("packet,"), "%llu,%llu", &pts, &pos);
+		__int64 pts;
+		Uint64 pos;
+		sscanf(line + strlength("packet,"), "%lld,%llu", &pts, &pos);
 		
-		if (pts_next_expected == 0 && pos_buffer_i == 0)
-			consecutive_pts = pts == 0;
+		if (beginning)
+		{
+			if (pos_buffer_i == 0)
+			{
+				if (pts == 0)
+				{
+					pos_buffer[pos_buffer_i++] = pos;
+					continue;
+				}
+				consecutive_pts = false;
+				pts_next_expected = pts - 3003 * 2;
+			}
+			else
+			if (pts == 3003)
+			{
+				consecutive_pts = true;
+				EXIFtoSubtitleOnFrame(f0, f1, fps60, pos_buffer[0], 0);
+				i++;
+				pos_buffer_i = 0;
+				pts_next_expected = pts;
+			}
+			else
+			{
+				consecutive_pts = false;
+				pts_next_expected = 3003 * -2;
+			}
+			beginning = false;
+		}
 		if (consecutive_pts)
 		{
 			if (pts != pts_next_expected)
