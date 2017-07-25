@@ -23,21 +23,22 @@
 	#endif
 
 	#include <tchar.h>
+	#include <io.h>
 
 	#define _TCAT(a,b) (_T(a) _T(b))
 #else
 	#include <unistd.h>
+	#include <sys/io.h>
 
 	#define _T
 	#define _TCAT(a,b) (a b)
 	#define _TCHAR char
 	#define TCHAR char
 	#define _tmain main
+	#define __cdecl
 	#define _tcscpy strcpy
 	#define _tcscmp strcmp
 	#define _tfopen fopen
-	#define _tspawnlp spawnlp
-	#define _tspawnvp spawnvp
 	#define _ftprintf fprintf
 	#define _stprintf sprintf
 
@@ -60,9 +61,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <io.h>
 #include <fcntl.h>
-#include <process.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+	#include <process.h>
+#else
+	#include <spawn.h>
+	#include <sys/wait.h>
+
+	#define _P_WAIT 0
+
+	int _tspawnvp(int mode, const TCHAR *cmdname, const TCHAR *const *argv)
+	{
+		if (mode != _P_WAIT)
+			return -1; // not implemented in this wrapper
+		pid_t pid;
+		int status = posix_spawnp(&pid, cmdname, NULL, NULL, (char *const *)argv, environ);
+		if (status == 0)
+		{
+			if (waitpid(pid, &status, 0) != -1)
+				return status;
+			return -1;
+		}
+		return -1;
+	}
+	template <typename... Args>
+	int _tspawnlp(int mode, const TCHAR *cmdname, Args... args)
+	{
+		const TCHAR *const argv[] = {(const TCHAR *)args...};
+		return _tspawnvp(mode, cmdname, (char *const *)argv);
+	}
+#endif
 
 #define STDIN_FILENO 0
 
