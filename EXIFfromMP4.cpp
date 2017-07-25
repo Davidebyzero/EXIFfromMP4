@@ -15,6 +15,8 @@
  *  along with EXIFfromMP4.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define REQUIRE_EXIFTOOL_9_67_OR_LATER
+
 #if defined(_WIN32) || defined(_WIN64)
 	#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
 	#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
@@ -318,6 +320,7 @@ int EXIFtoSubtitles(FILE *f0, FILE *f1)
 	return 0;
 }
 
+#ifndef REQUIRE_EXIFTOOL_9_67_OR_LATER
 BYTE *GetFirstFrameThumbnailWithEXIFfromMP4(FILE *f, Uint &bufferLength)
 // pointer returned by this function is either NULL (indictating error) or allocated with malloc() with free() needing to be done on it later
 {
@@ -494,6 +497,7 @@ BYTE *GetFirstFrameThumbnailWithEXIFfromMP4(FILE *f, Uint &bufferLength)
 			return NULL;
 	}
 }
+#endif
 
 int __cdecl _tmain(int argc, _TCHAR* argv[])
 {
@@ -555,12 +559,22 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 			if ((DWORD&)exif[0x19] == DWORD_ENDIAN('USR1'))
 			{
 #if defined(_WIN32) || defined(_WIN64)
-				TCHAR filename[32768];
-				_stprintf_s(filename, _T("\"%s\""), argv[4]); // workaround for flaw in the MSCRT implementation of passing arguments in the spawn functions - enclose filename in quotes in case it has spaces
+				TCHAR image_filename[32768];
+				_stprintf_s(image_filename, _T("\"%s\""), argv[4]); // workaround for flaw in the MSCRT implementation of passing arguments in the spawn functions - enclose filename in quotes in case it has spaces
 #else
-				const TCHAR *filename = argv[4];
+				const TCHAR *image_filename = argv[4];
 #endif
 
+#ifdef REQUIRE_EXIFTOOL_9_67_OR_LATER
+	#if defined(_WIN32) || defined(_WIN64)
+				TCHAR mp4_filename[32768];
+				_stprintf_s(mp4_filename, _T("\"%s\""), argv[2]); // workaround for flaw in the MSCRT implementation of passing arguments in the spawn functions - enclose filename in quotes in case it has spaces
+	#else
+				const TCHAR *mp4_filename = argv[2];
+	#endif
+				if (_tspawnlp(_P_WAIT, exiftool, exiftool, _T("-overwrite_original"), _T("-tagsFromFile"), mp4_filename, image_filename, NULL) == -1)
+					_ftprintf(stderr, _T("Error starting %s\n"), exiftool);
+#else
 				Uint initialThumbnailLength;
 				BYTE *initialThumbnail = GetFirstFrameThumbnailWithEXIFfromMP4(f0, initialThumbnailLength);
 				if (!initialThumbnail)
@@ -569,21 +583,22 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 				{
 					int stdin_backup = _dup(STDIN_FILENO);
 					int stdin_pipe[2];
-#if defined(_WIN32) || defined(_WIN64)
+	#if defined(_WIN32) || defined(_WIN64)
 					if (_pipe(stdin_pipe, initialThumbnailLength, _O_BINARY) < 0)
-#else
+	#else
 					if (_pipe(stdin_pipe) < 0)
-#endif
+	#endif
 						return -1;
 					_dup2(stdin_pipe[0], STDIN_FILENO);
 					_write(stdin_pipe[1], initialThumbnail, initialThumbnailLength);
 					_close(stdin_pipe[1]);
 
-					if (_tspawnlp(_P_WAIT, exiftool, exiftool, _T("-overwrite_original"), _T("-tagsFromFile"), _T("-"), filename, NULL) == -1)
+					if (_tspawnlp(_P_WAIT, exiftool, exiftool, _T("-overwrite_original"), _T("-tagsFromFile"), _T("-"), image_filename, NULL) == -1)
 						_ftprintf(stderr, _T("Error starting %s\n"), exiftool);
 
 					_dup2(stdin_backup, STDIN_FILENO);
 				}
+#endif
 
 				// since the date+time stamps have spaces in them, they must be enclosed in quotes to work around a flaw in the MSCRT implementation of passing arguments in the spawn functions;
 				// exiftool can handle it even if the quotes are passed through as literal quotes
@@ -692,7 +707,7 @@ int __cdecl _tmain(int argc, _TCHAR* argv[])
 					_T("-AccelerometerZ=0"),
 					_T("-RollAngle="),
 					_T("-PitchAngle="),
-					_T("-overwrite_original"), filename, NULL
+					_T("-overwrite_original"), image_filename, NULL
 				};
 
 				for (Uint i=0;; i++)
