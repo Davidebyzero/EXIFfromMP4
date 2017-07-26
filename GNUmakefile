@@ -1,5 +1,5 @@
 SOURCES=EXIFfromMP4.cpp
-CFLAGS=-Wno-multichar -D_FILE_OFFSET_BITS=64 -fno-threadsafe-statics
+CFLAGS=-Wno-multichar -D_FILE_OFFSET_BITS=64 -fno-threadsafe-statics -std=c++11
 CFLAGS2=-O3
 LDFLAGS=
 

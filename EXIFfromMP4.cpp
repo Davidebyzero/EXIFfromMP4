@@ -26,6 +26,8 @@
 	#include <io.h>
 
 	#define _TCAT(a,b) (_T(a) _T(b))
+
+	#define MAIN_CALL __cdecl
 #else
 	#include <unistd.h>
 	#include <sys/io.h>
@@ -35,7 +37,6 @@
 	#define _TCHAR char
 	#define TCHAR char
 	#define _tmain main
-	#define __cdecl
 	#define _tcscpy strcpy
 	#define _tcscmp strcmp
 	#define _tfopen fopen
@@ -56,6 +57,8 @@
 	#ifndef _countof
 	#define _countof(array) (sizeof(array)/sizeof(array[0]))
 	#endif
+
+	#define MAIN_CALL
 #endif
 
 #include <stdio.h>
@@ -555,7 +558,7 @@ BYTE *GetFirstFrameThumbnailWithEXIFfromMP4(FILE *f, Uint &bufferLength)
 }
 #endif
 
-int __cdecl _tmain(int argc, _TCHAR* argv[])
+int MAIN_CALL _tmain(int argc, _TCHAR* argv[])
 {
 	if (_tcscmp(argv[1], _T("-srt"))==0)
 	{
