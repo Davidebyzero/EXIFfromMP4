@@ -30,7 +30,11 @@
 	#define MAIN_CALL __cdecl
 #else
 	#include <unistd.h>
-	#include <sys/io.h>
+	#ifdef __CYGWIN__
+		#include <io.h>
+	#else
+		#include <sys/io.h>
+	#endif
 
 	#define _T
 	#define _TCAT(a,b) (a b)
