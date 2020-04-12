@@ -271,7 +271,11 @@ void EXIFtoSubtitleOnFrame(FILE *f0, FILE *f1, bool fps60, Uint64 pos, Uint i)
 		fprintf(f1, "%u.%u", WORD_ENDIAN((WORD&)exif[0x60])/10, WORD_ENDIAN((WORD&)exif[0x60])%10);
 	else
 		fprintf(f1, "?");
-	fprintf(f1, " mm\n\n");
+	fprintf(f1, " mm");
+
+	fprintf(f1, "  (%d,%d)", (short)WORD_ENDIAN((WORD&)exif[0xA8]), (short)WORD_ENDIAN((WORD&)exif[0x9E]));
+
+	fputs("\n\n", f1);
 }
 
 int EXIFtoSubtitles(FILE *f0, FILE *f1)
