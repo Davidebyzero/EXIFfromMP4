@@ -81,7 +81,7 @@ sigcnt1 and sigcnt2 appear at a certain point and subsequently increment by 1 ea
 	A = cloudy
 	B = shade
 76 (2): ISO
-78 (2): sigcnt1 = E9
+78 (1): sigcnt1 = E9
 79 (1): sigcnt2 = 20
 7A (1): mode category
 	10 = not Intelligent Auto
@@ -105,7 +105,7 @@ sigcnt1 and sigcnt2 appear at a certain point and subsequently increment by 1 ea
 89 (1): ? 00
 8A (2): white balance green level (usually 0400)
 8C (1): sigcnt1 = ED
-8D (2): sigcnt2 = 24
+8D (1): sigcnt2 = 24
 8E (1): ? 00
 8F (2): white balance blue level
 91 (1): sigcnt1 = EE
